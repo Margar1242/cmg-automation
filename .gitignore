@@ -1,0 +1,16 @@
+.idea
+.pytest_cache
+__pycache__
+*/__pycache__
+*/*/__pycache__
+report
+reports
+*report.json
+results*
+geckodriver.log
+.DS_Store
+env
+allure_results_*
+pytest_html_report.html
+archive/
+output.json
