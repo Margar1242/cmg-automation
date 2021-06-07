@@ -144,7 +144,7 @@ Click the row based on the browser you ran your tests to see allure results with
 ![Html Report](docs/html_results/allure_results.png)  
 
 ## ![Mail](docs/mail/mail.png) Send test report to email  
-![Mail Report](docs/mail/mail_report.png)  
+
 By default this option is turned off, you can specify ```to_email``` parameter to turn on this option  
 ### Parameters:  
 - ```--to_email``` to send email report to specified email address  
