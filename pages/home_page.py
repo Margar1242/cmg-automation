@@ -4,7 +4,6 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from action_wrapper.element_actions import ElementActions
 from action_wrapper.element_finder import ElementFinder
 from action_wrapper.wait_actions import WaitActions
-from time import sleep
 from constants.locators.home_page_locators import HomePageLocator
 from pages.base_page import BasePage
 
@@ -14,9 +13,9 @@ class HomePage(BasePage):
         super().__init__(driver)
         self.page = ''
 
-    def is_loaded(self):
+    def is_loaded(self, url=None):
         try:
-            WaitActions.wait_until_element_is_visible(self.driver, HomePageLocator.STRATEGY)
+            WaitActions.wait_until_element_is_visible(self.driver, HomePageLocator.HEADER_LOCATOR)
         except TimeoutError:
             raise RuntimeError(f"The {self.page} page is not loaded properly")
 
@@ -42,15 +41,11 @@ class HomePage(BasePage):
         return ElementActions.get_attribute_from_element(element, 'href')
 
     @allure.step("Click on category in Home Page")
-    def click_on_category(self, element, random=False):
-        url = element.get_attribute('href')
-        element.click()
-        if not random:
-            WaitActions.wait_until_url_contains(self.driver, url)
-
-    @allure.step("Wait until url contain for Home Page")
-    def wait_until_url_contain(self, url):
-        WaitActions.wait_until_url_contains(self.driver, url)
+    def click_on_category(self, locator_name):
+        if self.is_mobile:
+            self.click_on_toggle()
+        url = ElementActions.get_attribute(self.driver, getattr(HomePageLocator, locator_name), 'href')
+        self.get(url)
 
     @allure.step("Wait until also like section is visible for Home Page")
     def get_also_like_section(self):
@@ -58,8 +53,8 @@ class HomePage(BasePage):
 
     @allure.step("Get top ten games for Home Page")
     def get_top_ten_game_links(self):
-        elements = ElementFinder.find_elements_by_css_selector(self.top_ten_games_section,
-                                                               '.game-item .game-link-wrapper a')[:10]
+        elements = ElementFinder.find_element_from_element(self.top_ten_games_section,
+                                                           '.game-item .game-link-wrapper a', multiple=True)[:10]
         game_links = []
         for element in elements:
             game_links.append(ElementActions.get_attribute_from_element(element, 'href'))
@@ -67,8 +62,13 @@ class HomePage(BasePage):
 
     @allure.step("Click on MORE dropdown category for Home Page")
     def click_on_more_category(self, category):
-        element = ElementFinder.find_element_by_css_selector(self.more, f'.expandable-wrapper .menu .{category}')
+        if self.is_mobile:
+            self.click_on_toggle()
+            ElementActions.click_on_element(self.driver, HomePageLocator.MORE)
+        element = ElementFinder.find_element_from_element(self.more, f'.expandable-wrapper .menu .{category}')
         url = ElementActions.get_attribute_from_element(element, 'href')
-        element.click()
-        WaitActions.wait_until_url_contains(self.driver, url)
-        sleep(1)
+        self.get(url)
+
+    @allure.step("Click on toggle in Home Page")
+    def click_on_toggle(self):
+        ElementActions.click_on_element(self.driver, HomePageLocator.TOGGLE)

@@ -9,6 +9,7 @@ if __name__ == '__main__':
     os.environ[URL] = arguments.env
     os.environ[RUN_MODE] = arguments.run_mode
     os.environ[HEADLESS] = str(arguments.headless)
+    os.environ[PLATFORM] = str(arguments.platform)
     if arguments.headless:
         os.environ[DIMENSIONS] = arguments.dimensions
 
@@ -17,7 +18,7 @@ if __name__ == '__main__':
     if Types.MOBILE.value in arguments.type:
         generate_device_config_file(arguments)
         appium_service = AppiumService()
-        appium_service.start()
+        appium_service.start(args=['--allow-insecure=chromedriver_autodownload'])
     pool = Pool()
     if len(arguments.type) > 1:
         pool.map(run_command, arguments.type)

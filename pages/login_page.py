@@ -15,9 +15,9 @@ class LogInPage(BasePage):
         super().__init__(driver)
         self.page = 'login'
 
-    def is_loaded(self):
+    def is_loaded(self, url=None):
         try:
-            WaitActions.wait_until_element_is_visible(self.driver, LogInPageLocators.LOGIN_BUTTON)
+            WaitActions.wait_until_element_is_visible(self.driver, LogInPageLocators.HEADER_LOCATOR)
         except TimeoutError:
             raise RuntimeError(f"The {self.page} page is not loaded properly")
 
@@ -29,7 +29,6 @@ class LogInPage(BasePage):
             'username': LogInPageLocators.USERNAME,
             'password': LogInPageLocators.PASSWORD,
             'submit_button': LogInPageLocators.SUBMIT_BUTTON,
-            'user_page': LogInPageLocators.USER_PAGE,
             'forgot_password': LogInPageLocators.FORGOT_PASSWORD,
             'user_signup': LogInPageLocators.USER_SIGNUP
         }
@@ -46,7 +45,7 @@ class LogInPage(BasePage):
 
     @allure.step("Get Sign Up button link on Login Page")
     def get_signup_link(self):
-        element = ElementFinder.find_element_by_css_selector(self.user_signup, 'p > strong > a')
+        element = ElementFinder.find_element_from_element(self.user_signup, 'p > strong > a')
         return ElementActions.get_attribute_from_element(element, 'href')
 
     @allure.step("Get Forgot password link on Login Page")
@@ -63,13 +62,14 @@ class LogInPage(BasePage):
 
     @allure.step("Enter incorrect username and password on Login Page")
     def enter_incorrect_username_and_password(self):
-        # self.username.clear()
         ElementActions.put_text(self.driver, LogInPageLocators.USERNAME, "11abcde")
         ElementActions.put_text(self.driver, LogInPageLocators.PASSWORD, "1a1bcde")
 
     @allure.step("Click on Log In button on Login Page")
-    def click_on_login_button(self):
+    def click_on_login_button(self, need_wait=False):
         ElementActions.click_on_element(self.driver, LogInPageLocators.SUBMIT_BUTTON)
+        if need_wait:
+            WaitActions.wait_until_element_is_visible(self.driver, LogInPageLocators.GAME_IMAGE)
 
     @allure.step("Get incorrect login or password error message on Login Page")
     def get_alert(self):
@@ -85,11 +85,10 @@ class LogInPage(BasePage):
 
     @allure.step("Click on forgot password button on Login Page")
     def click_on_forgot_password_link(self):
-        ElementActions.click_on_element(self.driver, LogInPageLocators.FORGOT_PASSWORD)
-        WaitActions.wait_until_url_contains(self.driver, f'{self.main_url()}/login/forgot-password')
+        url = ElementActions.get_attribute(self.driver, LogInPageLocators.FORGOT_PASSWORD, 'href')
+        self.get(url)
 
     @allure.step("Click on sign up button on Login Page")
     def click_on_signup_link(self):
         url = ElementActions.get_attribute(self.driver, LogInPageLocators.SIGNUP_LINK, 'href')
-        ElementActions.click_on_element(self.driver, LogInPageLocators.SIGNUP_LINK)
-        WaitActions.wait_until_url_contains(self.driver, url)
+        self.get(url)

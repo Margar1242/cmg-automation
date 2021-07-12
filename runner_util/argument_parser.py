@@ -12,13 +12,14 @@ class ArgParser:
         parser = argparse.ArgumentParser(
             description="Run Web UI tests",
             formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-        parser.add_argument('--env', type=str, default='https://d8-stage.coolmathgames.com',
+        parser.add_argument('--env', type=str, default='https://stage.coolmathgames.com',
                             help='Set the environment in which tests will be run', )
         parser.add_argument('--type', nargs='+', default=['desktop'],
                             help='Set the type where tests should be run desktop or mobile',
                             choices=['desktop', 'mobile', 'browser_stack_web', 'browser_stack_mobile'])
         parser.add_argument('--page', '-p', nargs='+', help='run specific class tests',
-                            choices=['home', 'login', 'game', 'global_header_navigation'])
+                            choices=['home', 'login', 'game', 'global_header_navigation', 'mobile_game', 'trivia',
+                                     'mobile_specific', 'category', 'signup'])
         parser.add_argument('--throughput', help='simulate internet connection speed')
         parser.add_argument('--group', type=str, default='', help='run specific group tests')
         parser.add_argument('--case', type=str, default='', help='Input page')

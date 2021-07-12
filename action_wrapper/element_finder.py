@@ -3,6 +3,7 @@ import time
 import allure
 from selenium.common.exceptions import StaleElementReferenceException, ElementNotInteractableException
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.common.by import By
 
 from action_wrapper.move_actions import MoveActions
 from action_wrapper.wait_actions import WaitActions
@@ -29,31 +30,17 @@ class ElementFinder:
         return element
 
     @staticmethod
-    def find_elements_by_css_selector(locator, css_selector, repeat=3):
+    def find_element_from_element(parent, selector, multiple=False, by=By.CSS_SELECTOR, repeat=3):
         is_stale = True
         elements = None
         repeat_count = 0
         while is_stale and repeat_count < repeat:
             try:
                 repeat_count += 1
-                elements = locator.find_elements_by_css_selector(css_selector)
+                elements = parent.find_elements(by=by, value=selector) if multiple \
+                    else parent.find_element(by=by, value=selector)
                 is_stale = False
             except (StaleElementReferenceException, ElementNotInteractableException):
                 # Firefox case
                 time.sleep(0.3)
         return elements
-
-    @staticmethod
-    def find_element_by_css_selector(locator, css_selector, repeat=3):
-        is_stale = True
-        element = None
-        repeat_count = 0
-        while is_stale and repeat_count < repeat:
-            try:
-                repeat_count += 1
-                element = locator.find_element_by_css_selector(css_selector)
-                is_stale = False
-            except (StaleElementReferenceException, ElementNotInteractableException):
-                # Firefox case
-                time.sleep(0.3)
-        return element

@@ -29,6 +29,7 @@ class TestGlobalHeaderNavigationPage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.global_header_navigation
     @pytest.mark.demo
+    @pytest.mark.web
     def test_home_page_login_button(self):
         # GH-1
         self.global_header_navigation_page.click_on_login_button()
@@ -40,6 +41,7 @@ class TestGlobalHeaderNavigationPage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.global_header_navigation
     @pytest.mark.demo
+    @pytest.mark.web
     def test_home_page_sign_up_button(self):
         # GH-2
         self.global_header_navigation_page.click_on_sign_up_button()
@@ -50,6 +52,8 @@ class TestGlobalHeaderNavigationPage(TestCase):
     @allure.title('Verify user profile')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.global_header_navigation
+    @pytest.mark.demo
+    @pytest.mark.web
     def test_home_page_userprofile(self):
         # GH-3
         self.global_header_navigation_page.click_on_login_button()
@@ -64,8 +68,8 @@ class TestGlobalHeaderNavigationPage(TestCase):
                         msg=self.global_header_navigation_page.exceptions['not_displayed'].format('User profile'))
 
         # GH-4
-        self.global_header_navigation_page.click_on_user_profile_button()
         nickname = self.global_header_navigation_page.get_nickname()
+        self.global_header_navigation_page.click_on_user_profile_button()
         url_tail = f'/profile/{nickname}'
         user_profile_url = self.global_header_navigation_page.current_url()
         self.assertIn(url_tail, user_profile_url,
@@ -74,7 +78,8 @@ class TestGlobalHeaderNavigationPage(TestCase):
                                                                                                    'urls'))
 
         # GH-5
-        self.global_header_navigation_page.close_ad_popup_button()
+        if not self.global_header_navigation_page.is_mobile:
+            self.global_header_navigation_page.close_ad_popup_button()
         self.global_header_navigation_page.click_on_log_out_button()
         current_url = self.global_header_navigation_page.current_url()
         correct_url = self.global_header_navigation_page.correct_url()

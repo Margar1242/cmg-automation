@@ -1,9 +1,11 @@
 import itertools
+import os
 
 import allure
 from selenium.common.exceptions import TimeoutException, MoveTargetOutOfBoundsException
 from selenium.webdriver import ActionChains
-
+from constants.runner_constants import PLATFORM, Platforms
+from constants.general_constants import BROWSER, Browsers
 from action_wrapper.wait_actions import WaitActions
 
 
@@ -15,6 +17,9 @@ class MoveActions:
         try:
             for _ in itertools.repeat(None, repeat):
                 element = WaitActions.wait_until_element_is_visible(driver, locator)
+                if os.environ[PLATFORM] in {Platforms.IOS.value, Platforms.ANDROID.value} or os.environ[BROWSER] != \
+                        Browsers.FIREFOX.value:
+                    raise MoveTargetOutOfBoundsException
                 ActionChains(driver).move_to_element(element).perform()
         except TimeoutException:
             raise TimeoutException(f"The {locator} element is not found after {time_out} seconds of wait")

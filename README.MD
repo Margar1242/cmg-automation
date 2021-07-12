@@ -10,6 +10,22 @@
 # System Requirements:
  - python3 
  - pip3
+ - java (greater or equal 1.8)
+    - follow the [documentation](https://openjdk.java.net/install/)
+    - [setup JAVA_HOME](https://docs.oracle.com/cd/E19182-01/821-0917/inst_jdk_javahome_t/index.html)
+ - android sdk 
+    - follow the [documentation](https://developer.android.com/studio?gclid=CjwKCAjw55-HBhAHEiwARMCszi_0dC0feIzvsoZFOVkNJOljiglPqSL2JXrjVWycwDsHEAQ63GHgqRoCjdkQAvD_BwE&gclsrc=aw.ds)
+    - setup env variables
+        - for windows please follow [this link](https://www.360logica.com/blog/how-to-set-path-environmental-variable-for-sdk-in-windows/)
+
+    ```
+    export ANDROID_HOME=$HOME/Android/Sdk
+    export PATH=$PATH:$ANDROID_HOME/emulator
+    export PATH=$PATH:$ANDROID_HOME/tools/bin
+    export PATH=$PATH:$ANDROID_HOME/tools
+    export PATH=$PATH:$ANDROID_HOME/platform-tools
+  - Install [Android studio](https://developer.android.com/studio?gclid=CjwKCAjw55-HBhAHEiwARMCszgzs3oY1Ypzrc0e7WyfRQJecX0liHM-4rK-uD2l4bwgpUzwOjAPSDhoCVCUQAvD_BwE&gclsrc=aw.ds) and setup android emulator
+    - Please follow the [link](https://developer.android.com/studio/run/managing-avds)
 
 # Installation
   - Install allure commandline [installation guide](https://docs.qameta.io/allure/#_installing_a_commandline)  
@@ -45,10 +61,10 @@ $ python3 run.py  --browser chrome
 
 ### Run parameters
 - ```--env``` - Set the url in which tests will be run  
- -- Default value ```https://www.google.com/```
+ -- Default value ```https://d8-stage.coolmathgames.com```
 
 ```sh
-python3 run.py --env https://www.google.com/
+python3 run.py --env https://d8-stage.coolmathgames.com
 ```
 - ```--page``` - run specific class tests  
  -- Supported values ```home```, ```etc```

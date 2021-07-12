@@ -21,7 +21,7 @@ from runner_util.serve_results import serve_results
 
 
 def create_bash_command(args):
-    bash_command = f"pytest -s --verbose " \
+    bash_command = f"pytest -s --verbose --durations=0 " \
                    "--allure-link-pattern=test_case:link&range={} --allure-link-pattern=issue:link&range={}"
     if args.page is not None:
         for page in args.page:

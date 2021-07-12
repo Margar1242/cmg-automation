@@ -28,6 +28,8 @@ class TestHomePage(TestCase):
     @allure.title('Verify home page categories')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.home
+    @pytest.mark.demo
+    @pytest.mark.web
     def test_home_page_categories(self):
         # HP-1
         categories = ['strategy', 'skill', 'numbers', 'logic', 'trivia', 'playlists', 'random', 'daily_games']
@@ -40,8 +42,9 @@ class TestHomePage(TestCase):
                           'random': f'{self.home_page.main_url()}/random',
                           'daily_games': f'{self.home_page.main_url()}/1-daily-games'}
         for category in categories:
-            random = False if category != 'random' else True
-            self.home_page.click_on_category(getattr(self.home_page, category), random)
+            if self.home_page.is_mobile and category == "random":
+                continue
+            self.home_page.click_on_category(category.upper())
             if category == 'random':
                 self.home_page.get_also_like_section()
             current_url = self.home_page.current_url()
@@ -63,6 +66,7 @@ class TestHomePage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.home
     @pytest.mark.demo
+    @pytest.mark.web
     def test_home_top_ten_games(self):
         # HP-2
         expected_game_links = [f'{self.home_page.main_url()}/0-run-3',
@@ -86,6 +90,7 @@ class TestHomePage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.home
     @pytest.mark.demo
+    @pytest.mark.web
     def test_more_category(self):
         # HP-4
         expected_links = {

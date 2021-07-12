@@ -2,7 +2,6 @@ import os
 from unittest import TestCase
 import allure
 import pytest
-from time import sleep
 
 from constants.general_constants import RUN_MODE, TYPE, RunModes, Types
 from pages.game_page import GamePage
@@ -30,13 +29,15 @@ class TestGamePage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.game
     @pytest.mark.demo
+    @pytest.mark.web
+    @pytest.mark.skipif(os.environ[TYPE] in {Types.MOBILE.value, Types.BS_MOBILE.value}, reason='Not mobile automated')
     def test_game_page_playlist(self):
         # GP-4
         self.assertTrue(self.game_page.playlists_button.is_displayed(),
                         msg=self.game_page.exceptions['not_displayed'].format('Playlists button'))
 
         expected_url = f'{self.game_page.main_url()}/playlists/{self.game_page.page}'
-        self.game_page.click_playlists_button(expected_url)
+        self.game_page.click_playlists_button()
 
         current_url = self.game_page.current_url()
         self.assertEqual(expected_url, current_url,
@@ -47,6 +48,7 @@ class TestGamePage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.game
     @pytest.mark.demo
+    @pytest.mark.web
     def test_game_page_also_like_section(self):
         # GP-5
         self.assertTrue(self.game_page.also_like_section.is_displayed(),
@@ -60,6 +62,7 @@ class TestGamePage(TestCase):
     @allure.title('Verify game page arrows')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.game
+    @pytest.mark.demo
     def test_game_page_arrows(self):
         # GP-6
         games, visible_games_count = self.game_page.get_also_like_section_game_list()
@@ -90,10 +93,11 @@ class TestGamePage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.game
     @pytest.mark.demo
+    @pytest.mark.web
     def test_game_page_playlist_game_url(self):
         # GP-7
         expected_url, element = self.game_page.get_also_like_section_random_game_url()
-        self.game_page.click_also_like_section_random_game(element, expected_url)
+        self.game_page.click_also_like_section_random_game(element)
         current_url = self.game_page.current_url()
         self.assertEqual(expected_url, current_url,
                          msg=self.game_page.exceptions['object_comparing'].format(expected_url, current_url, 'urls'))
@@ -103,43 +107,58 @@ class TestGamePage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.game
     @pytest.mark.demo
+    @pytest.mark.web
     def test_game_page_like_button(self):
         # GP-8
         self.assertTrue(self.game_page.like_button.is_displayed(),
                         msg=self.game_page.exceptions['not_displayed'].format('Like button'))
-        expected_text_before_like = 'Like this game?'
+        expected_text_before_like = 'like this game' if self.game_page.is_mobile else 'like'
         text_before_like = self.game_page.get_like_this_game_text()
-        self.assertEqual(expected_text_before_like, text_before_like,
-                         msg=self.game_page.exceptions['object_comparing'].
-                         format(f'text before click({expected_text_before_like})',
-                                f'text before click({text_before_like})', ''))
-        self.assertIn('grey', self.game_page.get_like_button_color(), msg='Like button color is not white')
+        # TODO
+        # self.assertIn(expected_text_before_like, text_before_like,
+        #               msg=self.game_page.exceptions['is_not'].
+        #               format(f'Expected text before click({expected_text_before_like})',
+        #                      f'in current text before click({text_before_like})'))
+        button_color = self.game_page.get_like_button_color()
+        is_white = 'grey' in button_color or 'white' in button_color
+        self.assertTrue(is_white, msg=self.game_page.exceptions['is_not'].format('Like button color', 'white'))
         self.game_page.click_like_button()
-        expected_text_after_like = 'Thanks for voting!'
-        text_after_like = self.game_page.get_like_this_game_text()
-        self.assertEqual(expected_text_after_like, text_after_like,
-                         msg=self.game_page.exceptions['object_comparing'].
-                         format(f'text before click({expected_text_after_like})',
-                                f'text before click({text_after_like})', ''))
-        self.assertIn('green', self.game_page.get_like_button_color(), msg='Like button color is not green')
+        # TODO
+        # expected_text_after_like = 'thanks for voting'
+        # text_after_like = self.game_page.get_like_this_game_text()
+        # self.assertIn(expected_text_after_like, text_after_like,
+        #               msg=self.game_page.exceptions['is_not'].
+        #               format(f'Expected text before click({expected_text_after_like})',
+        #                      f'in current text before click({text_after_like})'))
+        self.assertIn('green', self.game_page.get_like_button_color(),
+                      msg=self.game_page.exceptions['is_not'].format('Like button color', 'green'))
 
     @allure.testcase('7')
     @allure.title('Verify game page load process')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.game
-    # @pytest.mark.timeout(60)
+    @pytest.mark.skipif(os.environ[TYPE] in {Types.MOBILE.value, Types.BS_MOBILE.value}, reason='Not mobile automated')
+    @pytest.mark.timeout(60)
     def test_game_load_process(self):
         # GP-1
         self.assertTrue(self.game_page.timer.is_displayed())
-        start = self.game_page.get_timer_seconds()
-        stack = [str(second) for second in range(1, int(start))]
-        while stack:
-            current_time = self.game_page.get_timer_seconds()
-            if current_time == stack[-1]:
-                next_s = stack.pop()
-                self.assertEqual(current_time, next_s,
+        timer = self.game_page.timer
+        start = self.game_page.get_timer_seconds(timer)
+        stack = [second for second in range(start, 0, -1)]
+        expected_countdown_order = stack[:]
+        countdown = []
+        while True:
+            current_time = self.game_page.get_timer_seconds(timer)
+            if current_time in stack:
+                countdown.append(current_time)
+                stack.remove(current_time)
+
+            if current_time is None:
+                self.assertEqual(expected_countdown_order, countdown,
                                  msg=self.game_page.exceptions['object_comparing'].
-                                 format(f'time({next_s})', f'time ({current_time})', ''))
+                                 format(f'countdown ({expected_countdown_order})', f'countdown ({countdown})',
+                                        'orders'))
+                break
         # GP-2
         self.assertTrue(self.game_page.continue_button.is_displayed(),
                         msg=self.game_page.exceptions['not_displayed'].format)
@@ -156,8 +175,10 @@ class TestGamePage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.game
     @pytest.mark.demo
+    @pytest.mark.web
+    @pytest.mark.skipif(os.environ[TYPE] in {Types.MOBILE.value, Types.BS_MOBILE.value}, reason='Not mobile automated')
     def test_game_page_structure(self):
-        # GP-10
+        # GP-9
         self.assertTrue(self.game_page.game_name_title.is_displayed(),
                         msg=self.game_page.exceptions['not_displayed'].format('Game name title'))
         self.assertTrue(self.game_page.like_this_game.is_displayed(),
@@ -203,6 +224,8 @@ class TestGamePage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.game
     @pytest.mark.demo
+    @pytest.mark.web
+    @pytest.mark.skipif(os.environ[TYPE] in {Types.MOBILE.value, Types.BS_MOBILE.value}, reason='Not mobile automated')
     def test_game_page_structure(self):
         # GP-10
         self.assertTrue(self.game_page.gear_promo.is_displayed(),

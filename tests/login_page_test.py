@@ -29,6 +29,7 @@ class TestLogInPage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.login
     @pytest.mark.demo
+    @pytest.mark.web
     def test_login_page_structure(self):
         # L-1
         expected_title = 'LOG IN'
@@ -67,6 +68,7 @@ class TestLogInPage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.login
     @pytest.mark.demo
+    @pytest.mark.web
     def test_incorrect_login_password(self):
         # L-2
         expected_alert = 'Sorry, we don’t have a record of that nickname and/or password.' \
@@ -84,6 +86,7 @@ class TestLogInPage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.login
     @pytest.mark.demo
+    @pytest.mark.web
     def test_forgot_password_button(self):
         # L-4
         self.assertTrue(self.login_page.forgot_password.is_displayed(),
@@ -99,18 +102,23 @@ class TestLogInPage(TestCase):
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.login
     @pytest.mark.demo
+    @pytest.mark.web
     def test_valid_username_password(self):
         # L-3
         self.login_page.enter_valid_username_and_password()
-        self.login_page.click_on_login_button()
-        self.assertTrue(self.login_page.user_page.is_displayed(),
-                        msg=self.login_page.exceptions['not_displayed'].format('User Page'))
+        self.login_page.click_on_login_button(need_wait=True)
+        expected_url = self.login_page.main_url()
+        current_url = self.login_page.current_url()
+        current_url = current_url[:-1] if current_url.endswith('/') else current_url
+        self.assertEqual(expected_url, current_url,
+                         msg=self.login_page.exceptions['object_comparing'].format(expected_url, current_url, 'urls'))
 
     @allure.testcase('5')
     @allure.title('Verify the functionality of Sign up button')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.login
     @pytest.mark.demo
+    @pytest.mark.web
     def test_signup_button(self):
         # L-5
         self.assertTrue(self.login_page.user_signup.is_displayed(),

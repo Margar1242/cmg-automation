@@ -43,3 +43,8 @@ class ElementActions:
     @allure.step("Type value of attribute of element")
     def get_attribute_from_element(element, attribute):
         return element.get_attribute(attribute)
+
+    @staticmethod
+    @allure.step("Type value of attribute of element")
+    def get_css_property_value_from_element(element, css_property):
+        return element.value_of_css_property(css_property)

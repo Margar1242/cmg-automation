@@ -1,1 +1,1 @@
-{"platformName": "Android", "platformVersion": "10", "automationName": "UIAutomator2", "browserName": "chrome", "deviceName": "Android Emulator"}
+{"platformName": "Android", "platformVersion": "11", "automationName": "UIAutomator2", "browserName": "chrome", "deviceName": "emulator-5554"}

@@ -1,8 +1,15 @@
+import os
 from selenium.webdriver.common.by import By
+from constants.general_constants import TYPE, Types
 
 
 class GamePageLocators:
     # GP-1
+    HEADER = 'div > header[class*="none"]' if os.environ[TYPE] in {Types.MOBILE.value, Types.BS_MOBILE.value} \
+        else 'main > header[class*="none"]'
+    HEADER_LOCATOR = (By.CSS_SELECTOR, HEADER)
+    SECTION = '.game-on-mobile' if os.environ[TYPE] in {Types.MOBILE.value, Types.BS_MOBILE.value} \
+        else '.game-on-desktop'
     TIMER = (By.ID, 'timer_div')
     GAME_LOADING_TEXT = (By.CLASS_NAME, 'loadingText')
     AD_CONTAINER = (By.ID, 'adcontainer')
@@ -18,10 +25,10 @@ class GamePageLocators:
     PLAYLISTS_BUTTON = (By.CLASS_NAME, 'mb-2')
 
     # GP-5, GP-6
-    ALSO_LIKE_SECTION = (By.CLASS_NAME, 'view-display-id-carousel_game_detail')
-    ALSO_LIKE_SECTION_GAMES = (By.CSS_SELECTOR, '.jcarousel:first-child ul:first-child')
-    RIGHT_ARROW = (By.CLASS_NAME, 'jcarousel-control-next')
-    LEFT_ARROW = (By.CLASS_NAME, 'jcarousel-control-prev')
+    ALSO_LIKE_SECTION = (By.CSS_SELECTOR, f'{SECTION} .view-display-id-carousel_game_detail')
+    ALSO_LIKE_SECTION_GAMES = (By.CSS_SELECTOR, f'{SECTION} .jcarousel ul')
+    RIGHT_ARROW = (By.CSS_SELECTOR, f'{SECTION} .jcarousel-control-next')
+    LEFT_ARROW = (By.CSS_SELECTOR, f'{SECTION} .jcarousel-control-prev')
 
     # GP-8
     LIKE_BUTTON = (By.CSS_SELECTOR, 'img[alt="Like"]')
