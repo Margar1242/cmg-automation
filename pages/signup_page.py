@@ -86,9 +86,11 @@ class SignupPage(BasePage):
 
     @allure.step("Click on random premium avatar for Signup Page")
     def click_on_random_premium_avatars(self):
+        ElementActions.click_on_element(self.driver, SignupPageLocator.VIEW_ALL_BUTTON)
         premium_avatars = ElementFinder.find_element_from_element(self.avatar_section, '.premium-avatar-label',
                                                                   multiple=True)
-        choice([avatar for avatar in premium_avatars if avatar.is_displayed()]).click()
+        choice([ElementFinder.find_element_from_element(avatar, 'input') for avatar in premium_avatars if
+                avatar.is_displayed()]).click()
 
     @allure.step("Get premium avatar popup text for Signup Page")
     def get_popup_text(self):
@@ -124,7 +126,8 @@ class SignupPage(BasePage):
         ElementActions.put_text(self.driver, SignupPageLocator.CONFIRM_PASSWORD, password)
         ElementActions.click_on_element(self.driver, SignupPageLocator.SIGNUP_BUTTON)
         if not self.is_mobile:
-            ElementActions.click_on_element(self.driver, SignupPageLocator.CLOSE_POPUP)
+            if ElementFinder.get_element_existence(self.driver, SignupPageLocator.CLOSE_POPUP, timeout=10):
+                ElementActions.click_on_element(self.driver, SignupPageLocator.CLOSE_POPUP)
         WaitActions.wait_until_url_contains(self.driver, f'{self.main_url()}/profile/{username}')
 
     @allure.step("Get suggested username for Signup Page")
@@ -136,6 +139,10 @@ class SignupPage(BasePage):
         if self.is_mobile:
             self.click_on_toggle()
         ElementActions.click_on_element(self.driver, SignupPageLocator.LOGOUT)
+        if self.is_mobile:
+            WaitActions.wait_until_element_is_visible(self.driver, SignupPageLocator.MAIN_PAGE_GAMES)
+        else:
+            WaitActions.wait_until_element_is_visible(self.driver, SignupPageLocator.MAIN_PAGE_LOGIN_BUTTON)
 
     @allure.step("Get all avatars from avatars section for Signup Page")
     def get_all_images(self, section="avatar", pseudo="after"):
@@ -179,6 +186,9 @@ class SignupPage(BasePage):
         ElementActions.click_on_element(self.driver, SignupPageLocator.TOGGLE)
 
     @allure.step("Click on new nickname button in Signup Page")
-    def click_new_nickname_button(self, count=2):
-        for _ in range(count):
-            ElementActions.click_on_element(self.driver, SignupPageLocator.NEW_NICKNAME_BUTTON)
+    def click_new_nickname_button(self):
+        while True:
+            if ElementFinder.get_element_existence(self.driver, SignupPageLocator.ALERT_MESSAGE, timeout=5):
+                ElementActions.click_on_element(self.driver, SignupPageLocator.NEW_NICKNAME_BUTTON)
+                continue
+            break

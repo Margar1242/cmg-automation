@@ -13,7 +13,7 @@ from os import path
 import requests
 
 from runner_util.generate_html_report import GenerateHTMLReport
-from helpers.helpers import read_file
+from helpers.helpers import read_file, get_platform_name, get_sheet_link
 from runner_util.argument_parser import ArgParser
 from constants.general_constants import *
 from constants.runner_constants import *
@@ -23,11 +23,12 @@ from runner_util.serve_results import serve_results
 def create_bash_command(args):
     bash_command = f"pytest -s --verbose --durations=0 " \
                    "--allure-link-pattern=test_case:link&range={} --allure-link-pattern=issue:link&range={}"
+    platform_name, slash = get_platform_name()
     if args.page is not None:
         for page in args.page:
-            bash_command += f" tests/{page}_page_test.py"
+            bash_command += f" tests{slash}{page}_page_test.py"
     else:
-        bash_command += " tests/"
+        bash_command += f" tests{slash}"
     if args.thread_count is not None:
         bash_command += f" -n {args.thread_count}"
     if args.group:
@@ -37,16 +38,17 @@ def create_bash_command(args):
     return bash_command
 
 
-def send_slack_report(args, passed, failed, skipped, error, browser, platform, duration, build_url):
+def send_slack_report(args, passed, failed, skipped, error, browser, platform, duration, build_url, environment, sheet):
     color = Color.FAIL.value if failed > 0 or error > 0 else Color.PASS.value
     emoji = Emoji.THUMB_DOWN.value if failed > 0 or error > 0 else Emoji.THUMB_UP.value
     total = passed + failed + skipped + error
-    now = datetime.now().strftime(TIME_FORMAT.value)
+    now = datetime.now().strftime(TIME_FORMAT)
     report = Template(read_file(Templates.SLACK_TEMPLATE.value)).substitute(BROWSER=browser, DATE=now, EMOJI=emoji,
-                                                                           COLOR=color, PLATFORM=platform,
-                                                                           PASSED=passed, FAILED=failed,
-                                                                           SKIPPED=skipped, ERROR=error, TOTAL=total,
-                                                                           DURATION=duration, BUILD_URL=build_url)
+                                                                            COLOR=color, PLATFORM=platform,
+                                                                            PASSED=passed, FAILED=failed,
+                                                                            SKIPPED=skipped, ERROR=error, TOTAL=total,
+                                                                            DURATION=duration, BUILD_URL=build_url,
+                                                                            ENVIRONMENT=environment, SHEET=sheet)
     json_params_encoded = json.dumps(json.loads(report))
     requests.post(url=args.slack_hook, data=json_params_encoded, headers={CONTENT_TYPE: APPLICATION_JSON})
 
@@ -79,22 +81,37 @@ def send_email_report(args, passed, fail, skip, error, browser, platform, durati
 def run_command(argument: str):
     arguments = ArgParser().get_args()
     bash_command = create_bash_command(arguments)
+    platform_name, slash = get_platform_name()
     if argument in arguments.browser:
         os.environ[BROWSER] = argument
         os.environ[TYPE] = arguments.type[0]
     if argument in arguments.type:
         os.environ[TYPE] = argument
         os.environ[BROWSER] = arguments.browser[0]
-    bash_command += f' --alluredir=allure_results_{argument} --json-report --json-report-summary --json-report-file={argument}_report.json'
+    bash_command += f' --alluredir=allure_results_{argument} --json-report --json-report-summary ' \
+                    f'--json-report-file={argument}_report.json'
     subprocess.call(bash_command.split(' '))
+    shell = False if platform_name != 'windows' else True
+    make_dir = 'mkdir' if platform_name != 'windows' else 'md'
+    copy = 'cp -r' if platform_name != 'windows' else 'xcopy /y /e /h'
+    remove = 'rm -rf' if platform_name != 'windows' else 'rmdir /s /q'
+    remove_file = 'rm -rf' if platform_name != 'windows' else 'del /f /q /s'
+    move = 'mv' if platform_name != 'windows' else 'move /y'
     if not path.exists(f'reports'):
-        subprocess.call(f"mkdir reports".split(' '))
-    if path.exists(f'reports/allure-reports_for_{argument}'):
-        subprocess.call(f"cp -r reports/allure-reports_for_{argument}/history allure_results_{argument}".split(' '))
-        subprocess.call(f"rm -rf reports/allure-reports_for_{argument} ".split(' '))
-    subprocess.call(f"allure generate allure_results_{argument} --clean -o allure-reports_for_{argument}".split(' '))
-    subprocess.call(f"mv allure-reports_for_{argument} {argument}_report.json reports".split(' '))
-    subprocess.call(f"rm -rf allure_results_{argument} output.json archive pytest_html_report.html".split(' '))
+        subprocess.call(f"{make_dir} reports".split(' '), shell=shell)
+    if path.exists(f'reports{slash}allure-reports_for_{argument}'):
+        subprocess.call(
+            f"{copy} reports{slash}allure-reports_for_{argument}{slash}history allure_results_{argument}".split(' '),
+            shell=shell)
+        subprocess.call(f"{remove} reports{slash}allure-reports_for_{argument}".split(' '), shell=shell)
+    subprocess.call(f"allure generate allure_results_{argument} --clean -o allure-reports_for_{argument}".split(' '),
+                    shell=shell)
+    subprocess.call(f"{move} allure-reports_for_{argument} reports".split(' '), shell=shell)
+    subprocess.call(f"{move} {argument}_report.json reports".split(' '), shell=shell)
+    subprocess.call(f"{remove} allure_results_{argument}".split(' '), shell=shell)
+    subprocess.call(f"{remove_file} output.json pytest_html_report.html".split(' '), shell=shell)
+    if path.exists('archive'):
+        subprocess.call(f"{remove} archive".split(' '), shell=shell)
 
 
 def generate_device_config_file(args):
@@ -111,13 +128,14 @@ def generate_device_config_file(args):
         json.dump(config, json_file)
 
 
-def generate_reports(arguments):
+def generate_reports(arguments, file):
     generate_report = GenerateHTMLReport()
     generate_report.append_title(arguments.browser)
     browsers = ['chrome', 'safari', 'firefox']
+    platform_name, slash = get_platform_name()
     for browser in browsers:
-        if path.exists(f'reports/{browser}_report.json'):
-            with open(f'reports/{browser}_report.json') as json_report:
+        if path.exists(f'reports{slash}{browser}_report.json'):
+            with open(f'reports{slash}{browser}_report.json') as json_report:
                 data = json.load(json_report)
                 duration = f"{round(data[DURATION])} seconds"
                 platform = data[ENVIRONMENT][PLATFORM]
@@ -127,14 +145,17 @@ def generate_reports(arguments):
                 error = summary[Statuses.ERROR.value] if Statuses.ERROR.value in summary else 0
                 skipped = summary[Statuses.SKIP.value] if Statuses.SKIP.value in summary else 0
             generate_report.append(browser, platform, duration, passed, failed, skipped, error)
-            if arguments.send_slack:
+            if arguments.send_slack and browser in arguments.browser:
+                sheet_url = '---'
+                if arguments.update_sheet == 'yes':
+                    sheet_url = f'<{get_sheet_link(file)}|*Google Spreadsheet Link*>'
                 send_slack_report(arguments, passed, failed, skipped, error,
-                                  browser, platform, duration, arguments.build_url)
-            if arguments.to_email is not None:
+                                  browser.capitalize(), platform, duration, arguments.build_url, arguments.env, sheet_url)
+            if arguments.to_email is not None and browser in arguments.browser:
                 send_email_report(arguments, passed, failed, skipped, error,
                                   browser, platform, duration, arguments.build_url)
     generate_report.generate()
-    if path.exists(f'assets') and not path.exists(f'reports/assets'):
-        shutil.copytree('assets', 'reports/assets')
+    if path.exists(f'assets') and not path.exists(f'reports{slash}assets'):
+        shutil.copytree('assets', f'reports{slash}assets')
     if arguments.results == "show":
         serve_results()

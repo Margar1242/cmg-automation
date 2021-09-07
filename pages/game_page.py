@@ -2,18 +2,20 @@ import allure
 from time import sleep
 from selenium.webdriver.remote.webdriver import WebDriver
 from random import choice
+import requests
 
 from action_wrapper.element_actions import ElementActions
 from action_wrapper.element_finder import ElementFinder
 from action_wrapper.wait_actions import WaitActions
 from constants.locators.game_page_locators import GamePageLocators
 from pages.base_page import BasePage
+from constants.game_page_constants import GAMES_DATA_URL, GAME_NODE_JSON_URL
 
 
 class GamePage(BasePage):
     def __init__(self, driver: WebDriver):
         super().__init__(driver)
-        self.page = '0-mini-colors'
+        self.page = '0-powerline-io'
 
     def is_loaded(self, url=None):
         try:
@@ -49,6 +51,11 @@ class GamePage(BasePage):
             'leaderboard': GamePageLocators.LEADERBOARD,
             'like_this_game': GamePageLocators.LIKE_THIS_GAME,
             'game_loading_text': GamePageLocators.GAME_LOADING_TEXT,
+            'rating_module': GamePageLocators.RATING_MODULE,
+            'rating': GamePageLocators.RATING,
+            'rating_value': GamePageLocators.RATING_VALUE,
+            'votes_count': GamePageLocators.VOTES_COUNT,
+            'game_urls': GamePageLocators.GAME_URLS,
         }
 
         return ElementFinder.find_element(self.driver, mapper[item])
@@ -62,7 +69,8 @@ class GamePage(BasePage):
 
     @allure.step("Click continue button for Game Page")
     def click_continue_button(self):
-        ElementActions.click_on_element(self.driver, GamePageLocators.CONTINUE_BUTTON)
+        if ElementFinder.get_element_existence(self.driver, GamePageLocators.CONTINUE_BUTTON):
+            ElementActions.click_on_element(self.driver, GamePageLocators.CONTINUE_BUTTON)
 
     @allure.step("Get playlists button for Game Page")
     def click_playlists_button(self):
@@ -125,7 +133,8 @@ class GamePage(BasePage):
 
     @allure.step("Get 'Instruction' section title for Game Page")
     def get_instructions_title(self):
-        return ElementFinder.find_element_from_element(self.instructions, 'h3:first-child').text
+        return ElementFinder.find_element_from_element(self.instructions, 'h2').text.replace('\t', '').\
+            replace('\n', '').strip()
 
     @allure.step("Get 'Top Picks' section title for Game Page")
     def get_top_picks_title(self):
@@ -163,3 +172,34 @@ class GamePage(BasePage):
     @allure.step("Get 'Like This Section?' for Game Page")
     def get_like_this_game_text(self):
         return ElementActions.get_text(self.driver, GamePageLocators.LIKE_THIS_GAME).lower()
+
+    @allure.step("Get games and game nodes info for Game Page")
+    def get_games_data_and_nodes(self):
+        games = requests.get(url=GAMES_DATA_URL).json()
+        nodes = requests.get(url=GAME_NODE_JSON_URL).json()
+
+        games_data = {game['title']: game['id'] for game in games}
+        nodes_data = {node['nid']: node['likes'] for node in nodes}
+        return games_data, nodes_data
+
+    @allure.step("Click on '{1}' filter for All Games Page")
+    def click_on_filter(self, filter_):
+        element = getattr(GamePageLocators, filter_.upper())
+        url = ElementActions.get_attribute(self.driver, element, 'href')
+        self.get(url)
+
+    @allure.step("Get all games for Game Page")
+    def get_games_url(self):
+        games = {}
+        elements = ElementFinder.find_element_from_element(self.game_urls, ' .views-row > span:nth-child(1) > a',
+                                                           multiple=True)
+        for element in elements:
+            game_name = element.text
+            url = ElementActions.get_attribute_from_element(element, 'href')
+            games[game_name] = url
+        return games
+
+    @allure.step("Get 'Thanks for voting!' message for Game Page")
+    def get_like_message(self):
+        return ElementActions.get_text(self.driver, GamePageLocators.LIKE_MESSAGE).replace('\t', ''). \
+            replace('\n', '').strip().lower()

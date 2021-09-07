@@ -54,7 +54,7 @@ class TriviaPage(BasePage):
         WaitActions.wait_until_element_is_visible(self.driver, TriviaPageLocators.MORE_SECTION__VISIBLE_GAMES)
         ElementActions.click_on_element(self.driver, TriviaPageLocators.SHOW_MORE_BUTTON)
 
-    @allure.step("Get More Favorites games in Trivia Page")
+    @allure.step("Get 'More Favorite' games in Trivia Page")
     def get_expanded_games(self, child=2, random=False):
         games = ElementFinder.find_element_from_element(self.more_favorites,
                                                         f'.home-more-quizzes:nth-child({child}) li', multiple=True)
@@ -74,12 +74,12 @@ class TriviaPage(BasePage):
         self.get(url)
         return url
 
-    @allure.step("Click on 'See all trivia link' in Trivia Page")
+    @allure.step("Click on 'See All Trivia' link in Trivia Page")
     def click_on_see_all_trivia(self):
         url = ElementActions.get_attribute(self.driver, TriviaPageLocators.SEE_ALL_TRIVIA, 'href')
         self.get(url)
 
-    @allure.step("Click on 'Start the quiz' button in Trivia Page")
+    @allure.step("Click on 'Start The Quiz' button in Trivia Page")
     def click_on_start_the_quiz_button(self):
         ElementActions.click_on_element(self.driver, TriviaPageLocators.START_QUIZ)
 
@@ -91,7 +91,7 @@ class TriviaPage(BasePage):
         color = Color.from_string(rgb).hex
         return color
 
-    @allure.step("Click on 'Start the quiz' button in Trivia Page")
+    @allure.step("Click on 'Times Up' text in Trivia Page")
     def get_times_up_text(self):
         element = ElementFinder.find_element(self.driver, TriviaPageLocators.TIMES_UP, timeout=30)
         text = element.text

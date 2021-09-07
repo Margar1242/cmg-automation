@@ -10,6 +10,7 @@ if __name__ == '__main__':
     os.environ[RUN_MODE] = arguments.run_mode
     os.environ[HEADLESS] = str(arguments.headless)
     os.environ[PLATFORM] = str(arguments.platform)
+    os.environ[UPDATE_SPREADSHEET] = arguments.update_sheet
     if arguments.headless:
         os.environ[DIMENSIONS] = arguments.dimensions
 
@@ -28,4 +29,4 @@ if __name__ == '__main__':
     pool.join()
     if Types.MOBILE.value in arguments.type:
         appium_service.stop()
-    generate_reports(arguments)
+    generate_reports(arguments, __file__)

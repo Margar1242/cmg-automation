@@ -25,6 +25,7 @@ class GlobalHeaderNavigationLocators:
     PROGRESS_BAR = (By.CSS_SELECTOR, f'{HEADER} .progress')
     USER_PROFILE = (By.CSS_SELECTOR, f'{HEADER} .welcome-box')
     LOG_OUT = (By.CSS_SELECTOR, f'{HEADER} .logout')
+    MAIN_PAGE_GAMES = (By.CLASS_NAME, 'img-fluid')
 
     # GH-4
     CLOSE_AD_POPUP = (By.CLASS_NAME, 'btn-close')

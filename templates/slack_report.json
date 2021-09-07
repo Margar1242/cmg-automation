@@ -5,7 +5,7 @@
             "color": "$COLOR",
             "title": "Test Automation Report | $BROWSER | $DATE",
             "title_link": "$BUILD_URL/Reports",
-            "text": "PLATFORM: $PLATFORM\nDURATION: $DURATION\nTOTAL TESTS: $TOTAL\nTEST STATUS: Passed=$PASSED Failed=$FAILED Skipped=$SKIPPED Error=$ERROR",
+            "text": "PLATFORM: $PLATFORM\nENVIRONMENT: $ENVIRONMENT\nSPREADSHEET URL: $SHEET\nDURATION: $DURATION\nTOTAL TESTS: $TOTAL\nTEST STATUS: Passed=$PASSED Failed=$FAILED Skipped=$SKIPPED Error=$ERROR",
             "attachment_type": "default"
         }
     ]

@@ -42,4 +42,5 @@ class MobileSpecificLocators:
     VIEW_ALL_BUTTON = (By.CSS_SELECTOR, '#tab1 .view-all-mobile')
     MY_GAMES = (By.ID, 'tab1-inner')
 
+    MAIN_PAGE_GAMES = (By.CLASS_NAME, 'block-newcategoryhomefeatured')
     TOGGLE = (By.CLASS_NAME, 'navbar-toggler')

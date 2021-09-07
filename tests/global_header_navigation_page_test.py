@@ -1,9 +1,7 @@
-import os
 from unittest import TestCase
 import allure
 import pytest
 
-from constants.general_constants import RUN_MODE, RunModes
 from pages.global_header_navigation_page import GlobalHeaderNavigationPage
 
 
@@ -19,10 +17,8 @@ class TestGlobalHeaderNavigationPage(TestCase):
     @pytest.fixture(autouse=True)
     def run_around_tests(self):
         # delete cookies before each test if should delete cookies
-        if os.environ[RUN_MODE] == RunModes.DELETE_COOKIES.value:
-            self.driver.delete_all_cookies()
-            self.driver.refresh()
-        yield
+        self.driver.delete_all_cookies()
+        self.driver.refresh()
 
     @allure.testcase('1')
     @allure.title('Verify login button functionality')
@@ -40,7 +36,7 @@ class TestGlobalHeaderNavigationPage(TestCase):
     @allure.title('Verify signup button functionality')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.global_header_navigation
-    @pytest.mark.demo
+    @pytest.mark.mobile
     @pytest.mark.web
     def test_home_page_sign_up_button(self):
         # GH-2
@@ -49,12 +45,12 @@ class TestGlobalHeaderNavigationPage(TestCase):
                         msg=self.global_header_navigation_page.exceptions['not_displayed'].format('Sign Up form'))
 
     @allure.testcase('3')
-    @allure.title('Verify user profile')
+    @allure.title('Verify user profile headers')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.global_header_navigation
-    @pytest.mark.demo
+    @pytest.mark.mobile
     @pytest.mark.web
-    def test_home_page_userprofile(self):
+    def test_home_page_userprofile_headers(self):
         # GH-3
         self.global_header_navigation_page.click_on_login_button()
         self.global_header_navigation_page.enter_username_and_password()
@@ -67,19 +63,35 @@ class TestGlobalHeaderNavigationPage(TestCase):
         self.assertTrue(self.global_header_navigation_page.log_out.is_displayed(),
                         msg=self.global_header_navigation_page.exceptions['not_displayed'].format('User profile'))
 
+    @allure.testcase('3')
+    @allure.title('Verify user profile page')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.global_header_navigation
+    @pytest.mark.mobile
+    @pytest.mark.web
+    def test_home_page_userprofile_page(self):
         # GH-4
+        self.global_header_navigation_page.click_on_login_button()
+        self.global_header_navigation_page.enter_username_and_password()
         nickname = self.global_header_navigation_page.get_nickname()
         self.global_header_navigation_page.click_on_user_profile_button()
-        url_tail = f'/profile/{nickname}'
-        user_profile_url = self.global_header_navigation_page.current_url()
-        self.assertIn(url_tail, user_profile_url,
-                      msg=self.global_header_navigation_page.exceptions['object_comparing'].format(url_tail,
-                                                                                                   user_profile_url,
+        expected_url = f'{self.global_header_navigation_page.main_url()}/profile/{nickname}'
+        current_url = self.global_header_navigation_page.current_url()
+        self.assertIn(expected_url, current_url,
+                      msg=self.global_header_navigation_page.exceptions['object_comparing'].format(expected_url,
+                                                                                                   current_url,
                                                                                                    'urls'))
 
+    @allure.testcase('3')
+    @allure.title('Verify user profile logout functionality')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.global_header_navigation
+    @pytest.mark.mobile
+    @pytest.mark.web
+    def test_home_page_logout_functionality(self):
         # GH-5
-        if not self.global_header_navigation_page.is_mobile:
-            self.global_header_navigation_page.close_ad_popup_button()
+        self.global_header_navigation_page.click_on_login_button()
+        self.global_header_navigation_page.enter_username_and_password()
         self.global_header_navigation_page.click_on_log_out_button()
         current_url = self.global_header_navigation_page.current_url()
         correct_url = self.global_header_navigation_page.correct_url()

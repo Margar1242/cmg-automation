@@ -62,96 +62,143 @@ class TestTriviaPage(TestCase):
                             msg=self.trivia_page.exceptions['not_displayed'].format('Game thumbnail'))
 
     @allure.testcase('3')
-    @allure.title('Verify more favorites section of Trivia Page')
+    @allure.title('Verify random game of Trivia Page')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.trivia
     @pytest.mark.mobile
     @pytest.mark.web
     def test_trivia_page_game(self):
+        results = {f'TP-{num}': False for num in range(3, 10)}
+        self.results.test_results.update(results)
+        exception = False
+        exception_message = ""
+
         # TP-3
-        game = self.trivia_page.get_expanded_games(child=1, random=True)
-        expected_url = self.trivia_page.click_on_random_game(game)
-        current_url = self.trivia_page.current_url()
-        self.assertEqual(expected_url, current_url,
-                         msg=self.trivia_page.exceptions['object_comparing'].format(expected_url, current_url, 'urls'))
+        try:
+            game = self.trivia_page.get_expanded_games(child=1, random=True)
+            expected_url = self.trivia_page.click_on_random_game(game)
+            current_url = self.trivia_page.current_url()
+            self.assertEqual(expected_url, current_url,
+                             msg=self.trivia_page.exceptions['object_comparing'].format(expected_url, current_url,
+                                                                                        'urls'))
+            self.results.test_results['TP-3'] = True
+        except AssertionError as e:
+            exception_message += f"\n{str(e)}" if exception else str(e)
+            exception = True
 
         # TP-4
-        if not self.trivia_page.is_mobile:
-            self.assertTrue(self.trivia_page.question_image.is_displayed(),
-                            msg=self.trivia_page.exceptions['not_displayed'].format('Quiz thumbnail'))
-        self.assertTrue(self.trivia_page.correct_answer.is_displayed(),
-                        msg=self.trivia_page.exceptions['not_displayed'].format('Correct answer counter'))
-        self.assertTrue(self.trivia_page.current_answer.is_displayed(),
-                        msg=self.trivia_page.exceptions['not_displayed'].format('Current answer counter'))
-        self.assertTrue(self.trivia_page.longest_answer.is_displayed(),
-                        msg=self.trivia_page.exceptions['not_displayed'].format('Longest answer counter'))
-        self.assertTrue(self.trivia_page.timer.is_displayed(),
-                        msg=self.trivia_page.exceptions['not_displayed'].format('Timer'))
-        self.assertTrue(self.trivia_page.quiz_name.is_displayed(),
-                        msg=self.trivia_page.exceptions['not_displayed'].format('Quiz name'))
-        self.assertTrue(self.trivia_page.start_quiz.is_displayed(),
-                        msg=self.trivia_page.exceptions['not_displayed'].format('Start quiz button'))
-        self.assertTrue(self.trivia_page.get_the_answer.is_displayed(),
-                        msg=self.trivia_page.exceptions['not_displayed'].format('"Get the answer..." text'))
-        self.assertTrue(self.trivia_page.see_all_trivia.is_displayed(),
-                        msg=self.trivia_page.exceptions['not_displayed'].format('See all trivia'))
+        try:
+            if not self.trivia_page.is_mobile:
+                self.assertTrue(self.trivia_page.question_image.is_displayed(),
+                                msg=self.trivia_page.exceptions['not_displayed'].format('Quiz thumbnail'))
+            self.assertTrue(self.trivia_page.correct_answer.is_displayed(),
+                            msg=self.trivia_page.exceptions['not_displayed'].format('Correct answer counter'))
+            self.assertTrue(self.trivia_page.current_answer.is_displayed(),
+                            msg=self.trivia_page.exceptions['not_displayed'].format('Current answer counter'))
+            self.assertTrue(self.trivia_page.longest_answer.is_displayed(),
+                            msg=self.trivia_page.exceptions['not_displayed'].format('Longest answer counter'))
+            self.assertTrue(self.trivia_page.timer.is_displayed(),
+                            msg=self.trivia_page.exceptions['not_displayed'].format('Timer'))
+            self.assertTrue(self.trivia_page.quiz_name.is_displayed(),
+                            msg=self.trivia_page.exceptions['not_displayed'].format('Quiz name'))
+            self.assertTrue(self.trivia_page.start_quiz.is_displayed(),
+                            msg=self.trivia_page.exceptions['not_displayed'].format('Start quiz button'))
+            self.assertTrue(self.trivia_page.get_the_answer.is_displayed(),
+                            msg=self.trivia_page.exceptions['not_displayed'].format('"Get the answer..." text'))
+            self.assertTrue(self.trivia_page.see_all_trivia.is_displayed(),
+                            msg=self.trivia_page.exceptions['not_displayed'].format('See all trivia'))
+            self.results.test_results['TP-4'] = True
+        except AssertionError as e:
+            exception_message += f"\n{str(e)}" if exception else str(e)
+            exception = True
 
         # TP-5
-        expected_url = f'{self.trivia_page.main_url()}/trivia'
-        self.trivia_page.click_on_see_all_trivia()
-        current_url = self.trivia_page.current_url()
-        self.assertEqual(expected_url, current_url,
-                         msg=self.trivia_page.exceptions['object_comparing'].format(expected_url, current_url, 'urls'))
+        try:
+            expected_url = f'{self.trivia_page.main_url()}/trivia'
+            self.trivia_page.click_on_see_all_trivia()
+            current_url = self.trivia_page.current_url()
+            self.assertEqual(expected_url, current_url,
+                             msg=self.trivia_page.exceptions['object_comparing'].format(expected_url, current_url,
+                                                                                        'urls'))
+            self.results.test_results['TP-5'] = True
+        except AssertionError as e:
+            exception_message += f"\n{str(e)}" if exception else str(e)
+            exception = True
 
         # TP-6
-        game_url = f'{self.trivia_page.main_url()}/trivia/which-came-first'
-        answer_color = {'green': False, 'red': False}
-        expected_green = '#65e08e'
-        expected_red = '#fd625e'
-        self.trivia_page.get(game_url)
-        self.trivia_page.click_on_start_the_quiz_button()
+        try:
+            game_url = f'{self.trivia_page.main_url()}/trivia/which-came-first'
+            answer_color = {'green': False, 'red': False}
+            expected_green = '#65e08e'
+            expected_red = '#fd625e'
+            self.trivia_page.get(game_url)
+            self.trivia_page.click_on_start_the_quiz_button()
+            self.results.test_results['TP-6'] = True
+        except AssertionError as e:
+            exception_message += f"\n{str(e)}" if exception else str(e)
+            exception = True
 
         # TP-7
-        expected_timer_text = "time's up"
-        current_timer_text = self.trivia_page.get_times_up_text()
-        self.assertIn(expected_timer_text, current_timer_text.lower(),
-                      msg=self.trivia_page.exceptions['object_comparing'].format(expected_timer_text.upper(),
-                                                                                 current_timer_text, 'text'))
-        self.trivia_page.click_on_next_question_button()
+        try:
+            expected_timer_text = "time's up"
+            current_timer_text = self.trivia_page.get_times_up_text()
+            self.assertIn(expected_timer_text, current_timer_text.lower(),
+                          msg=self.trivia_page.exceptions['object_comparing'].format(expected_timer_text.upper(),
+                                                                                     current_timer_text, 'text'))
+            self.trivia_page.click_on_next_question_button()
+            self.results.test_results['TP-7'] = True
+        except AssertionError as e:
+            exception_message += f"\n{str(e)}" if exception else str(e)
+            exception = True
 
-        # TP-6
+        # TP-8
         expected_quizzes_to_left = 9
         expected_correct_answer = 0
         expected_current_answer = 0
+        try:
+            for i in range(9):
+                left, correct, current = self.trivia_page.get_left_quizzes_count()
+                self.assertEqual(expected_quizzes_to_left, left,
+                                 msg=self.trivia_page.exceptions['object_comparing'].format(expected_quizzes_to_left,
+                                                                                            left,
+                                                                                            'quiz count to left'))
+                self.assertEqual(expected_correct_answer, correct,
+                                 msg=self.trivia_page.exceptions['object_comparing'].format(expected_correct_answer,
+                                                                                            correct,
+                                                                                            'correct answer count'))
+                self.assertEqual(expected_current_answer, current,
+                                 msg=self.trivia_page.exceptions['object_comparing'].format(expected_current_answer,
+                                                                                            current,
+                                                                                            'correct answer count'))
+                background_color = self.trivia_page.click_on_answer_button()
+                if background_color == expected_green:
+                    answer_color['green'] = True
+                    expected_current_answer += 1
+                    expected_correct_answer += 1
+                elif background_color == expected_red:
+                    answer_color['red'] = True
+                    expected_current_answer = 0
+                self.trivia_page.click_on_next_question_button()
+                expected_quizzes_to_left -= 1
 
-        for i in range(9):
-            left, correct, current = self.trivia_page.get_left_quizzes_count()
-            self.assertEqual(expected_quizzes_to_left, left,
-                             msg=self.trivia_page.exceptions['object_comparing'].format(expected_quizzes_to_left, left,
-                                                                                        'quiz count to left'))
-            self.assertEqual(expected_correct_answer, correct,
-                             msg=self.trivia_page.exceptions['object_comparing'].format(expected_correct_answer,
-                                                                                        correct,
-                                                                                        'correct answer count'))
-            self.assertEqual(expected_current_answer, current,
-                             msg=self.trivia_page.exceptions['object_comparing'].format(expected_current_answer,
-                                                                                        current,
-                                                                                        'correct answer count'))
-            background_color = self.trivia_page.click_on_answer_button()
-            if background_color == expected_green:
-                answer_color['green'] = True
-                expected_current_answer += 1
-                expected_correct_answer += 1
-            elif background_color == expected_red:
-                answer_color['red'] = True
-                expected_current_answer = 0
-            self.trivia_page.click_on_next_question_button()
-            expected_quizzes_to_left -= 1
+            for key, value in answer_color.items():
+                self.assertTrue(value, msg=self.trivia_page.exceptions['is_not'].format('Correct answer color',
+                                                                                        f'{key}'
+                                                                                        f'({eval(f"expected_{key}")})')
+                                )
+            self.results.test_results['TP-8'] = True
+        except AssertionError as e:
+            exception_message += f"\n{str(e)}" if exception else str(e)
+            exception = True
 
-        for key, value in answer_color.items():
-            self.assertTrue(value, msg=self.trivia_page.exceptions['is_not'].format('Correct answer color',
-                                                                                    f'{key}({eval(f"expected_{key}")})')
-                            )
         # TP-9
-        self.assertTrue(self.trivia_page.result.is_displayed(),
-                        msg=self.trivia_page.exceptions['not_displayed'].format('Result'))
+        try:
+            self.assertTrue(self.trivia_page.result.is_displayed(),
+                            msg=self.trivia_page.exceptions['not_displayed'].format('Result'))
+            self.results.test_results['TP-9'] = True
+        except AssertionError as e:
+            exception_message += f"\n{str(e)}" if exception else str(e)
+            exception = True
+
+        if exception:
+            raise AssertionError(exception_message)

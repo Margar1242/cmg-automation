@@ -4,7 +4,7 @@ from constants.general_constants import TYPE, Types
 
 
 class CategoryPageLocators:
-    # CP-1
+    # CAT-1
     HEADER = 'div > header[class*="none"]' if os.environ[TYPE] in {Types.MOBILE.value, Types.BS_MOBILE.value} \
         else 'main > header[class*="none"]'
     HEADER_LOCATOR = (By.CSS_SELECTOR, HEADER)
@@ -18,19 +18,19 @@ class CategoryPageLocators:
     RANDOM = (By.CSS_SELECTOR, f'{HEADER} .menu_random a')
     DAILY_GAMES = (By.CSS_SELECTOR, f'{HEADER} .menu_unlocked a')
 
-    # CP-2
+    # CAT-2
     TOP_AD = (By.ID, 'block-coolmath-adstop-homepage-728x90')
-    RIGHT_AD_1 = (By.ID,
-                  'google_ads_iframe_/45966600/pw/leaderboard_hp_0__container__')
+    RIGHT_AD_1 = (By.ID, 'google_ads_iframe_/45966600/pw/leaderboard_hp_0__container__')
     RIGHT_AD_2 = (By.ID, 'google_ads_iframe_/45966600/pw/medium_rectangle_hp_3__container__')
     RIGHT_AD_3 = (By.ID, 'google_ads_iframe_/45966600/pw/medium_rectangle_hp_1__container__')
     RIGHT_AD_4 = (By.ID, 'google_ads_iframe_/45966600/pw/medium_rectangle_hp_2__container__')
     RIGHT_AD_5 = (By.ID, 'google_ads_iframe_/45966600/pw/medium_rectangle_hp_4__container__')
 
-    # CP-3
-    ...
+    MOBILE_AD_1 = (By.ID, 'google_ads_iframe_\/45966600\/pw\/medium_rectangle_hp_0__container__')
+    MOBILE_AD_2 = (By.ID, 'google_ads_iframe_\/45966600\/pw\/medium_rectangle_hp_1__container__')
+    MOBILE_AD_3 = (By.ID, 'google_ads_iframe_\/45966600\/pw\/medium_rectangle_hp_3__container__')
 
-    # CP-5
+    # CAT-5
     ALSO_LIKE_SECTION = (By.CLASS_NAME, 'view-display-id-carousel_game_detail')
 
     TOGGLE = (By.CLASS_NAME, 'navbar-toggler')

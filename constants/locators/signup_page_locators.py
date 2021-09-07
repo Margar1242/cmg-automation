@@ -19,7 +19,7 @@ class SignupPageLocator:
     PASSWORD = (By.ID, 'edit-pass')
     CONFIRM_PASSWORD = (By.ID, 'edit-confirm-pass')
     PASSWORD_TEXT = (By.CSS_SELECTOR, '#edit-account > p:nth-child(4)')
-    AVATAR_SECTION = (By.CLASS_NAME, 'fieldset-wrapper')
+    AVATAR_SECTION = (By.ID, 'edit-cmgavatarcontainer')
     THEMES = (By.ID, 'themes')
     NICKNAME_SECTION = (By.ID, 'edit-publicname-container')
     NICKNAME_TEXT = (By.CSS_SELECTOR, '#edit-publicname-container > p')
@@ -43,5 +43,10 @@ class SignupPageLocator:
     # SU-7
     LOGOUT = (By.CSS_SELECTOR, f'{HEADER} .logout')
     CLOSE_POPUP = (By.CLASS_NAME, 'btn-close')
+    MAIN_PAGE_LOGIN_BUTTON = (By.CSS_SELECTOR, f'{HEADER} .login')
+    MAIN_PAGE_GAMES = (By.CLASS_NAME, 'views-element-container')
 
+    ALERT_MESSAGE = (By.CSS_SELECTOR, '#showErrorProfileNickname .error')
     TOGGLE = (By.CLASS_NAME, 'navbar-toggler')
+
+    VIEW_ALL_BUTTON = (By.CSS_SELECTOR, '.show-more:nth-child(2)')

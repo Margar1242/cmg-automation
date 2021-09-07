@@ -41,14 +41,24 @@ class GamePageLocators:
     INSTRUCTIONS = (By.CLASS_NAME, 'game-instructions')
     SKIP_ALL_AD_BUTTON = (By.CLASS_NAME, 'skip-ad-btn')
     TOP_PICKS_SECTION = (By.ID, 'block-views-block-top-picks-games-block-1')
+    RATING_MODULE = (By.CLASS_NAME, 'cmg_game_rating_val')
+    RATING = (By.CSS_SELECTOR, '.cmg_game_rating_val > .rating')
+    RATING_VALUE = (By.CSS_SELECTOR, '.cmg_game_rating_val > .rating-val')
+    VOTES_COUNT = (By.CSS_SELECTOR, '.cmg_game_rating_val > .cmg_game_tot_cnt')
 
     # GP-10
     GEAR_PROMO = (By.CSS_SELECTOR, '.cmg-gear-promo img')
     GO_AD_FREE_PROMO = (By.CSS_SELECTOR, '#monthly-subscription-plan > a > img')
     PROFILE_PROMO = (By.CLASS_NAME, 'profiles-promo')
     AZ_GAMES_SECTION = (By.CLASS_NAME, 'aside-link-title')
-    AIMING_GAMES = (By.CSS_SELECTOR,
-                    '.pane-queues-view-rightrail-games-promo > h2:first-child > a')
-    AZ_GAME_LIST = (By.CSS_SELECTOR,
-                    '.pane-queues-view-rightrail-games-promo')
+    AIMING_GAMES = (By.CSS_SELECTOR, '.pane-queues-view-rightrail-games-promo > h2:first-child > a')
+    AZ_GAME_LIST = (By.CSS_SELECTOR, '.pane-queues-view-rightrail-games-promo')
     LEADERBOARD = (By.CSS_SELECTOR, '.leaderboard-promo > a > img')
+
+    GAME_URLS = (By.CLASS_NAME, 'view-all-games')
+    AC = (By.CSS_SELECTOR, '#edit-title-1 > a')
+    DG = (By.CSS_SELECTOR, '#edit-title-2 > a')
+    HM = (By.CSS_SELECTOR, '#edit-title-3 > a')
+    NR = (By.CSS_SELECTOR, '#edit-title-4 > a')
+    SZ = (By.CSS_SELECTOR, '#edit-title-5 > a')
+    LIKE_MESSAGE = (By.ID, 'thumbsuplike_message')

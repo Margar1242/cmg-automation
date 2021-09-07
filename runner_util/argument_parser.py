@@ -19,7 +19,8 @@ class ArgParser:
                             choices=['desktop', 'mobile', 'browser_stack_web', 'browser_stack_mobile'])
         parser.add_argument('--page', '-p', nargs='+', help='run specific class tests',
                             choices=['home', 'login', 'game', 'global_header_navigation', 'mobile_game', 'trivia',
-                                     'mobile_specific', 'category', 'signup'])
+                                     'mobile_specific', 'category', 'signup', 'account_settings', 'all_games', 'footer',
+                                     'general_test_cases', 'daily_games', 'premium_signup', 'big_screen'])
         parser.add_argument('--throughput', help='simulate internet connection speed')
         parser.add_argument('--group', type=str, default='', help='run specific group tests')
         parser.add_argument('--case', type=str, default='', help='Input page')
@@ -51,6 +52,7 @@ class ArgParser:
                             help='specify platform for mobile')
         parser.add_argument('--deviceOs', type=str, help='specify device os for mobile')
         parser.add_argument('--device', type=str, help='specify device name for mobile')
+        parser.add_argument('--update_sheet', type=str, default='no', help='If "yes" update google spreadsheet')
         self.args = parser.parse_args()
 
     def get_args(self):

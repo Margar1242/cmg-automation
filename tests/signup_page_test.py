@@ -149,6 +149,7 @@ class TestLogInPage(TestCase):
     @pytest.mark.mobile
     def test_id_error_message(self):
         # SU-5
+        self.signup_page.click_new_nickname_button()
         self.signup_page.enter_not_valid_params()
         expected_error_text = 'Sorry, that Login ID is already taken. Please try another one.'
         current_error_text = self.signup_page.get_duplicate_id_error_message()
@@ -165,6 +166,7 @@ class TestLogInPage(TestCase):
     @pytest.mark.mobile
     def test_error_message(self):
         # SU-6
+        self.signup_page.click_new_nickname_button()
         self.signup_page.enter_not_valid_params(incorrect_password=True)
         expected_error_text = "Passwords do not match"
         current_error_text = self.signup_page.get_not_matched_password_error_message()
@@ -188,8 +190,8 @@ class TestLogInPage(TestCase):
         current_url = self.signup_page.current_url()
         self.assertIn(expected_url_part, current_url,
                       msg=self.signup_page.exceptions['is_not'].format(expected_url_part, f'in {current_url}'))
+        self.signup_page.get(self.signup_page.main_url())
         self.signup_page.logout()
-        self.signup_page.get(self.signup_page.correct_url())
 
     @allure.testcase('6')
     @allure.title('Verify avatars section of Signup Page')
@@ -198,7 +200,7 @@ class TestLogInPage(TestCase):
     @pytest.mark.web
     @pytest.mark.mobile
     def test_avatars_section(self):
-        # # SU-2
+        # SU-2
         expected_image = 'premium.svg'
         all_images, premium_images = self.signup_page.get_all_images()
         error_message = f'All avatar({len(all_images)}) and premium avatar ({len(premium_images)}) count are the same'

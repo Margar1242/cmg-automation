@@ -28,7 +28,6 @@ class TestHomePage(TestCase):
     @allure.title('Verify home page categories')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.home
-    @pytest.mark.demo
     @pytest.mark.web
     def test_home_page_categories(self):
         # HP-1
@@ -61,35 +60,40 @@ class TestHomePage(TestCase):
             self.assertEqual(current_url, expected_url,
                              msg=f'Expected ({expected_url}) and current {current_url} urls are different')
 
-    @allure.testcase('2')
-    @allure.title('Verify home page top 10 games')
+    @allure.testcase('3')
+    @allure.title('Verify home page ads')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.home
-    @pytest.mark.demo
     @pytest.mark.web
-    def test_home_top_ten_games(self):
-        # HP-2
-        expected_game_links = [f'{self.home_page.main_url()}/0-run-3',
-                               f'{self.home_page.main_url()}/0-fireboy-and-water-girl-in-the-forest-temple',
-                               f'{self.home_page.main_url()}/0-chess',
-                               f'{self.home_page.main_url()}/0-moto-x3m',
-                               f'{self.home_page.main_url()}/0-snake',
-                               f'{self.home_page.main_url()}/0-8-ball-pool',
-                               f'{self.home_page.main_url()}/0-tiny-fishing',
-                               f'{self.home_page.main_url()}/0-hangman',
-                               f'{self.home_page.main_url()}/0-powerline-io',
-                               f'{self.home_page.main_url()}/0-papas-freezeria']
+    @pytest.mark.flaky(reruns=2)
+    def test_home_page_ads(self):
+        # HP-3
+        self.driver.refresh()
+        self.assertTrue(self.home_page.top_ad.is_displayed(),
+                        msg=self.home_page.exceptions['not_displayed'].format('Top ad'))
+        if not self.home_page.is_mobile:
+            self.assertTrue(self.home_page.right_ad_1.is_displayed(),
+                            msg=self.home_page.exceptions['not_displayed'].format('Right side first ad'))
+            self.assertTrue(self.home_page.right_ad_2.is_displayed(),
+                            msg=self.home_page.exceptions['not_displayed'].format('Right side second ad'))
+            self.assertTrue(self.home_page.right_ad_3.is_displayed(),
+                            msg=self.home_page.exceptions['not_displayed'].format('Right side third ad'))
+            self.assertTrue(self.home_page.right_ad_4.is_displayed(),
+                            msg=self.home_page.exceptions['not_displayed'].format('Right side fourth ad'))
+            self.assertTrue(self.home_page.right_ad_5.is_displayed(),
+                            msg=self.home_page.exceptions['not_displayed'].format('Right side fifth ad'))
+        else:
+            self.assertTrue(self.home_page.mobile_ad_1.is_displayed(),
+                            msg=self.home_page.exceptions['not_displayed'].format('Second mobile ad'))
+            self.assertTrue(self.home_page.mobile_ad_2.is_displayed(),
+                            msg=self.home_page.exceptions['not_displayed'].format('Third mobile ad'))
+            self.assertTrue(self.home_page.mobile_ad_3.is_displayed(),
+                            msg=self.home_page.exceptions['not_displayed'].format('Fourth mobile ad'))
 
-        current_games = self.home_page.get_top_ten_game_links()
-        self.assertEqual(expected_game_links, current_games,
-                         msg=self.home_page.exceptions['object_comparing'].
-                         format(f'games ({expected_game_links})', f'games ({current_games})', 'url'))
-
-    @allure.testcase('3')
+    @allure.testcase('4')
     @allure.title('Verify home page MORE category')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.home
-    @pytest.mark.demo
     @pytest.mark.web
     def test_more_category(self):
         # HP-4

@@ -1,5 +1,3 @@
-import os
-
 import allure
 from selenium.webdriver.remote.webdriver import WebDriver
 
@@ -35,28 +33,28 @@ class LogInPage(BasePage):
 
         return ElementFinder.find_element(self.driver, mapper[item])
 
-    @allure.step("Get Your Login ID or Nickname placeholder on Login Page")
+    @allure.step("Get 'Your Login ID or Nickname' placeholder on Login Page")
     def get_login_placeholder(self):
         return ElementActions.get_attribute(self.driver, LogInPageLocators.USERNAME, "placeholder")
 
-    @allure.step("Get Password placeholder on Login Page")
+    @allure.step("Get 'Password' placeholder on Login Page")
     def get_password_placeholder(self):
         return ElementActions.get_attribute(self.driver, LogInPageLocators.PASSWORD, "placeholder")
 
-    @allure.step("Get Sign Up button link on Login Page")
+    @allure.step("Get 'Sign Up' button link on Login Page")
     def get_signup_link(self):
         element = ElementFinder.find_element_from_element(self.user_signup, 'p > strong > a')
         return ElementActions.get_attribute_from_element(element, 'href')
 
-    @allure.step("Get Forgot password link on Login Page")
+    @allure.step("Get 'Forgot Password' link on Login Page")
     def get_forgot_password_link(self):
         return ElementActions.get_attribute(self.driver, LogInPageLocators.FORGOT_PASSWORD, "href")
 
-    @allure.step("Get LOG IN title on Login Page")
+    @allure.step("Get 'LOG IN' title on Login Page")
     def get_log_in_text(self):
         return ElementActions.get_text(self.driver, LogInPageLocators.LOGIN_TITLE).strip().upper()
 
-    @allure.step("Get user signup text on Login Page")
+    @allure.step("Get 'User Signup' text on Login Page")
     def get_user_signup_text(self):
         return ElementActions.get_text(self.driver, LogInPageLocators.USER_SIGNUP).replace('\n', '').replace('\t', '')
 
@@ -65,7 +63,7 @@ class LogInPage(BasePage):
         ElementActions.put_text(self.driver, LogInPageLocators.USERNAME, "11abcde")
         ElementActions.put_text(self.driver, LogInPageLocators.PASSWORD, "1a1bcde")
 
-    @allure.step("Click on Log In button on Login Page")
+    @allure.step("Click on 'Log In' button on Login Page")
     def click_on_login_button(self, need_wait=False):
         ElementActions.click_on_element(self.driver, LogInPageLocators.SUBMIT_BUTTON)
         if need_wait:
@@ -83,12 +81,12 @@ class LogInPage(BasePage):
         ElementActions.put_text(self.driver, LogInPageLocators.USERNAME, "testrafik")
         ElementActions.put_text(self.driver, LogInPageLocators.PASSWORD, "testrafik")
 
-    @allure.step("Click on forgot password button on Login Page")
+    @allure.step("Click on 'Forgot Password' button on Login Page")
     def click_on_forgot_password_link(self):
         url = ElementActions.get_attribute(self.driver, LogInPageLocators.FORGOT_PASSWORD, 'href')
         self.get(url)
 
-    @allure.step("Click on sign up button on Login Page")
+    @allure.step("Click on 'Sign up' button on Login Page")
     def click_on_signup_link(self):
         url = ElementActions.get_attribute(self.driver, LogInPageLocators.SIGNUP_LINK, 'href')
         self.get(url)

@@ -20,7 +20,7 @@ class LogInPageLocators:
     SUBMIT_BUTTON = (By.ID, 'edit-submit')
 
     # L-3
-    GAME_IMAGE = (By.CLASS_NAME, 'img-fluid')
+    GAME_IMAGE = (By.CLASS_NAME, 'home-queues')
 
     # L-4
     FORGOT_PASSWORD = (By.CLASS_NAME, 'forgot-password')

@@ -1,5 +1,6 @@
 import allure
 from selenium.webdriver.remote.webdriver import WebDriver
+from time import sleep
 
 from action_wrapper.element_actions import ElementActions
 from action_wrapper.element_finder import ElementFinder
@@ -72,15 +73,19 @@ class MobileSpecificPage(BasePage):
 
     @allure.step("Enter username and password for Mobile Specific Game Page")
     def enter_username_and_password(self):
-        ElementActions.put_text(self.driver, MobileSpecificLocators.USERNAME_INPUT, 'testrafik')
-        ElementActions.put_text(self.driver, MobileSpecificLocators.PASSWORD, 'testrafik')
+        ElementActions.put_text(self.driver, MobileSpecificLocators.USERNAME_INPUT, 'CoolmathGamesTTV')
+        ElementActions.put_text(self.driver, MobileSpecificLocators.PASSWORD, 'jO&a08r8%yQJ')
         ElementActions.click_on_element(self.driver, MobileSpecificLocators.SUBMIT)
-        WaitActions.wait_until_element_is_visible(self.driver, MobileSpecificLocators.HEADER_LOCATOR)
+        WaitActions.wait_until_element_is_visible(self.driver, MobileSpecificLocators.MAIN_PAGE_GAMES)
 
     @allure.step("Click on user profile button for Mobile Specific Game Page")
     def click_on_user_profile_button(self):
-        self.click_on_toggle()
-        ElementActions.click_on_element(self.driver, MobileSpecificLocators.USER_PROFILE_BUTTON)
+        for _ in range(3):
+            try:
+                self.click_on_toggle()
+                ElementActions.click_on_element(self.driver, MobileSpecificLocators.USER_PROFILE_BUTTON)
+            except Exception:
+                sleep(0.3)
 
     @allure.step("Click on dropdown for Mobile Specific Game Page")
     def click_on_dropdown(self):
@@ -107,3 +112,4 @@ class MobileSpecificPage(BasePage):
     @allure.step("Click on 'View All' button for Mobile Specific Game Page")
     def click_on_view_all_button(self):
         ElementActions.click_on_element(self.driver, MobileSpecificLocators.VIEW_ALL_BUTTON)
+        sleep(2)

@@ -186,3 +186,12 @@ By default this option is turned off, you can specify
 $ python3 run.py --send_slack True --slack_hook https://hooks.slack.com/services/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
 ```
 
+## Google Spreadsheet Configuration
+Please read how to create [Google Spreadsheet Credentials Guid](https://www.dundas.com/support/learning/documentation/connect-to-data/how-to/connecting-to-google-sheets)  
+In this guid skip third(Data Connector) and 2.3.1(P12 file type) chapters  
+Copy credentials from downloaded json file into [Auth File](configs/cmg_automation_auth.json)  
+Then open your spreadsheet and from url copy spreadsheet and sheet ids into [Spreadsheet Config Fileq](configs/spreadsheet_config.json)  
+For example, in this url ```docs.google.com/spreadsheets/d/15a33mJ7DWwLfLMsWKxJKHkl9Nk22_X8QpdInbpPlq_0/edit#gid=860745136```
+the spreadsheet id is ```15a33mJ7DWwLfLMsWKxJKHkl9Nk22_X8QpdInbpPlq_0``` and sheet id is ```860745136```  
+By default, this option is turned off, you can specify  
+```--update_sheet True``` to turn on this option

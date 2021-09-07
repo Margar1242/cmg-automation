@@ -33,8 +33,18 @@ class HomePage(BasePage):
             'daily_games': HomePageLocator.DAILY_GAMES,
             'top_ten_games_section': HomePageLocator.TOP_TEN_GAMES_SECTION,
             'also_like_section': HomePageLocator.ALSO_LIKE_SECTION,
+            'top_ad': HomePageLocator.TOP_AD,
+            'right_ad_1': HomePageLocator.RIGHT_AD_1,
+            'right_ad_2': HomePageLocator.RIGHT_AD_2,
+            'right_ad_3': HomePageLocator.RIGHT_AD_3,
+            'right_ad_4': HomePageLocator.RIGHT_AD_4,
+            'right_ad_5': HomePageLocator.RIGHT_AD_5,
+            'mobile_ad_1': HomePageLocator.MOBILE_AD_1,
+            'mobile_ad_2': HomePageLocator.MOBILE_AD_2,
+            'mobile_ad_3': HomePageLocator.MOBILE_AD_3,
+
         }
-        return ElementFinder.find_element(self.driver, mapper[item])
+        return ElementFinder.find_element(self.driver, mapper[item], timeout=60)
 
     @allure.step("Get category link for Home Page")
     def get_category_link(self, element):
@@ -44,8 +54,11 @@ class HomePage(BasePage):
     def click_on_category(self, locator_name):
         if self.is_mobile:
             self.click_on_toggle()
-        url = ElementActions.get_attribute(self.driver, getattr(HomePageLocator, locator_name), 'href')
-        self.get(url)
+        if locator_name == "RANDOM":
+            ElementActions.click_on_element(self.driver, getattr(HomePageLocator, locator_name))
+        else:
+            url = ElementActions.get_attribute(self.driver, getattr(HomePageLocator, locator_name), 'href')
+            self.get(url)
 
     @allure.step("Wait until also like section is visible for Home Page")
     def get_also_like_section(self):

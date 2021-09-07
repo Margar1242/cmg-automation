@@ -3,7 +3,7 @@ from unittest import TestCase
 import allure
 import pytest
 
-from constants.general_constants import RUN_MODE, TYPE, RunModes, Types
+from constants.general_constants import TYPE, Types
 from pages.mobile_game_page import MobileGamePage
 
 
@@ -19,9 +19,8 @@ class TestMobileGamePage(TestCase):
     @pytest.fixture(autouse=True)
     def run_around_tests(self):
         # delete cookies before each test if should delete cookies
-        if os.environ[RUN_MODE] == RunModes.DELETE_COOKIES.value:
-            self.driver.delete_all_cookies()
-            self.driver.refresh()
+        self.driver.delete_all_cookies()
+        self.driver.refresh()
         yield
 
     @allure.testcase('1')
@@ -59,17 +58,32 @@ class TestMobileGamePage(TestCase):
     @pytest.mark.mobile_game
     @pytest.mark.mobile
     @pytest.mark.skipif(os.environ[TYPE] not in {Types.MOBILE.value, Types.BS_MOBILE.value}, reason='Web not automated')
-    def test_instruction_buttons(self):
+    def test_show_more_button(self):
         # MG-3
         self.assertTrue(self.game_page.show_more_button.is_displayed(),
                         msg=self.game_page.exceptions['not_displayed'].format('"Show More" button'))
 
+    @allure.testcase('3')
+    @allure.title('Verify instruction section buttons')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.mobile_game
+    @pytest.mark.mobile
+    @pytest.mark.skipif(os.environ[TYPE] not in {Types.MOBILE.value, Types.BS_MOBILE.value}, reason='Web not automated')
+    def test_show_more_button_expanding(self):
         self.game_page.click_on_show_more_button()
 
-        # MG-?
+        # MG-4
         self.assertTrue(self.game_page.show_less_button.is_displayed(),
                         msg=self.game_page.exceptions['not_displayed'].format('"Show less" button'))
 
-        # MG-4
+    @allure.testcase('3')
+    @allure.title('Verify instruction section buttons')
+    @allure.severity(allure.severity_level.CRITICAL)
+    @pytest.mark.mobile_game
+    @pytest.mark.mobile
+    @pytest.mark.skipif(os.environ[TYPE] not in {Types.MOBILE.value, Types.BS_MOBILE.value}, reason='Web not automated')
+    def test_show_less_button(self):
+        # MG-5
+        self.game_page.click_on_show_more_button()
         self.assertTrue(self.game_page.more_text.is_displayed(),
                         msg=self.game_page.exceptions['not_displayed'].format('Instruction more text'))

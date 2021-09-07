@@ -1,5 +1,6 @@
 import allure
 from selenium.webdriver.remote.webdriver import WebDriver
+from time import sleep
 
 from action_wrapper.element_actions import ElementActions
 from action_wrapper.element_finder import ElementFinder
@@ -53,7 +54,14 @@ class GlobalHeaderNavigationPage(BasePage):
         ElementActions.put_text(self.driver, GlobalHeaderNavigationLocators.PASSWORD, 'testrafik')
         ElementActions.click_on_element(self.driver, GlobalHeaderNavigationLocators.SUBMIT_BUTTON)
         if self.is_mobile:
-            self.click_on_toggle()
+            for _ in range(3):
+                try:
+                    self.click_on_toggle()
+                    WaitActions.wait_until_element_is_visible(self.driver, GlobalHeaderNavigationLocators.LOG_OUT,
+                                                              time_out=10)
+                    break
+                except Exception:
+                    sleep(0.3)
 
     @allure.step("Click on user profile button for Home Page")
     def click_on_user_profile_button(self):
@@ -75,8 +83,6 @@ class GlobalHeaderNavigationPage(BasePage):
 
     @allure.step("Click on log out button for Home Page")
     def click_on_log_out_button(self):
-        if self.is_mobile:
-            self.click_on_toggle()
         url = ElementActions.get_attribute(self.driver, GlobalHeaderNavigationLocators.LOG_OUT, 'href')
         self.get(url)
 

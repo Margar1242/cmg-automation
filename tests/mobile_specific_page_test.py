@@ -131,35 +131,69 @@ class TestGamePage(TestCase):
 
         self.main_page.click_on_toggle()
 
-    @allure.testcase('3')
+    @allure.testcase('4')
     @allure.title('Verify profile "Games" button')
     @allure.severity(allure.severity_level.CRITICAL)
     @pytest.mark.mobile_specific
     @pytest.mark.mobile
     @pytest.mark.skipif(os.environ[TYPE] not in {Types.MOBILE.value, Types.BS_MOBILE.value}, reason='Web not automated')
     def test_profile_games(self):
+        results = {f'MOB-{num}': False for num in range(4, 7)}
+        self.results.test_results.update(results)
+        exception = False
+        exception_message = ""
+
         # MOB-4
-        self.main_page.click_on_login_button()
-        self.main_page.enter_username_and_password()
-        self.main_page.click_on_user_profile_button()
-        dropdown_items = self.main_page.get_dropdown_items()
-        expected_filters = ['XP', 'Alphabetical', 'Likes', 'Recently Played']
-        for item in expected_filters:
-            self.assertTrue(dropdown_items[item].is_enabled(), msg=self.main_page.exceptions['is_not'].
-                            format(f'{item}', 'clickable'))
-        self.main_page.click_on_dropdown()
+        try:
+            self.main_page.click_on_login_button()
+            self.main_page.enter_username_and_password()
+            self.main_page.click_on_user_profile_button()
+            dropdown_items = self.main_page.get_dropdown_items()
+            expected_filters = ['XP', 'Alphabetical', 'Likes', 'Recently Played']
+            for item in expected_filters:
+                self.assertTrue(dropdown_items[item].is_enabled(), msg=self.main_page.exceptions['is_not'].
+                                format(f'{item}', 'clickable'))
+            self.results.test_results['MOB-4'] = True
+            self.main_page.click_on_dropdown()
+        except AssertionError as e:
+            exception_message += f"\n{str(e)}" if exception else str(e)
+            exception = True
 
         # MOB-5
-        games = self.main_page.get_profile_games()
-        if len(games) > 3:
-            self.assertTrue(self.main_page.view_all_button.is_displayed(),
-                            msg=self.main_page.exceptions['not_displayed'].format('"View All" button'))
-            # MOB-6
-            self.main_page.click_on_view_all_button()
-            for name, link in games.items():
-                if name:
-                    self.assertTrue(link.is_displayed(),
-                                    msg=self.main_page.exceptions['not_displayed'].format(name))
-        else:
-            self.assertFalse(self.main_page.view_all_button.is_displayed(),
-                             msg=self.main_page.exceptions['is_not'].format('"View All" button', 'invisible'))
+        try:
+            games = self.main_page.get_profile_games()
+            if len(games) > 3:
+                try:
+                    self.assertTrue(self.main_page.view_all_button.is_displayed(),
+                                    msg=self.main_page.exceptions['not_displayed'].format('"View All" button'))
+                    self.results.test_results['MOB-5'] = True
+                except AssertionError as e:
+                    exception_message += f"\n{str(e)}" if exception else str(e)
+                    exception = True
+
+                # MOB-6
+                try:
+                    self.main_page.click_on_view_all_button()
+                    for name, link in games.items():
+                        if name:
+                            self.assertTrue(link.is_displayed(),
+                                            msg=self.main_page.exceptions['not_displayed'].format(name))
+                    self.results.test_results['MOB-6'] = True
+                except AssertionError as e:
+                    exception_message += f"\n{str(e)}" if exception else str(e)
+                    exception = True
+            else:
+                try:
+                    self.assertFalse(self.main_page.view_all_button.is_displayed(),
+                                     msg=self.main_page.exceptions['is_not'].format('"View All" button', 'invisible'))
+                    self.results.test_results['MOB-5'] = True
+                except AssertionError as e:
+                    exception_message += f"\n{str(e)}" if exception else str(e)
+                    exception = True
+
+        except AssertionError as e:
+            exception_message += f"\n{str(e)}" if exception else str(e)
+            exception = True
+
+        if exception:
+            raise AssertionError(exception_message)

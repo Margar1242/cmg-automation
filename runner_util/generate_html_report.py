@@ -1,6 +1,7 @@
 import threading
 
 from string import Template
+from helpers.helpers import get_platform_name
 
 
 class GenerateHTMLReport:
@@ -67,6 +68,7 @@ class GenerateHTMLReport:
 
     def generate(self):
         self.lock.acquire()
+        platform_name, slash = get_platform_name()
         self.html_head += """
 
         </div>
@@ -75,7 +77,7 @@ class GenerateHTMLReport:
     </body>
     </html>
         """
-        report = open("reports/index.html", "w")
+        report = open(f"reports{slash}index.html", "w")
         report.write(self.html_head)
         report.close()
         self.lock.release()

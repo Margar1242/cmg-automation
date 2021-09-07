@@ -23,6 +23,15 @@ class HomePageLocator:
     ALSO_LIKE_SECTION = (By.CLASS_NAME, 'view-display-id-carousel_game_detail')
 
     # HP-3
-    ...
+    TOP_AD = (By.ID, 'block-coolmath-adstop-homepage-728x90')
+    RIGHT_AD_1 = (By.ID, 'google_ads_iframe_/45966600/pw/leaderboard_hp_0__container__')
+    RIGHT_AD_2 = (By.ID, 'google_ads_iframe_/45966600/pw/medium_rectangle_hp_3__container__')
+    RIGHT_AD_3 = (By.ID, 'google_ads_iframe_/45966600/pw/medium_rectangle_hp_1__container__')
+    RIGHT_AD_4 = (By.ID, 'google_ads_iframe_/45966600/pw/medium_rectangle_hp_2__container__')
+    RIGHT_AD_5 = (By.ID, 'google_ads_iframe_/45966600/pw/medium_rectangle_hp_4__container__')
+
+    MOBILE_AD_1 = (By.ID, 'google_ads_iframe_\/45966600\/pw\/medium_rectangle_hp_0__container__')
+    MOBILE_AD_2 = (By.ID, 'google_ads_iframe_\/45966600\/pw\/medium_rectangle_hp_1__container__')
+    MOBILE_AD_3 = (By.ID, 'google_ads_iframe_\/45966600\/pw\/medium_rectangle_hp_3__container__')
 
     TOGGLE = (By.CLASS_NAME, 'navbar-toggler')

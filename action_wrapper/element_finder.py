@@ -44,3 +44,12 @@ class ElementFinder:
                 # Firefox case
                 time.sleep(0.3)
         return elements
+
+    @staticmethod
+    def get_element_existence(driver, element, timeout=20):
+        flag = True
+        try:
+            ElementFinder.find_element(driver, element, timeout=timeout)
+        except:
+            flag = False
+        return flag
